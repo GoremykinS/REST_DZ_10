@@ -1,0 +1,81 @@
+Index: REST/1/DZ_1/DRF/backend/library/managers.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- REST/1/DZ_1/DRF/backend/library/managers.py	(date 1645116106035)
++++ REST/1/DZ_1/DRF/backend/library/managers.py	(date 1645116106035)
+@@ -0,0 +1,30 @@
++from django.contrib.auth.base_user import BaseUserManager
++from django.utils.translation import ugettext_lazy as _
++class CustomUserManager(BaseUserManager):
++    """
++    Custom user model manager where email is the unique identifiers
++    for authentication instead of usernames.
++    """
++    def create_user(self, email, password, **extra_fields):
++        """
++        Create and save a User with the given email and password.
++        """
++        if not email:
++            raise ValueError(_('The Email must be set'))
++        email = self.normalize_email(email)
++        user = self.model(email=email, **extra_fields)
++        user.set_password(password)
++        user.save()
++        return user
++    def create_superuser(self, email, password, **extra_fields):
++        """
++        Create and save a SuperUser with the given email and password.
++        """
++        extra_fields.setdefault('is_staff', True)
++        extra_fields.setdefault('is_superuser', True)
++        extra_fields.setdefault('is_active', True)
++        if extra_fields.get('is_staff') is not True:
++            raise ValueError(_('Superuser must have is_staff=True.'))
++        if extra_fields.get('is_superuser') is not True:
++            raise ValueError(_('Superuser must have is_superuser=True.'))
++        return self.create_user(email, password, **extra_fields)
+\ No newline at end of file
+Index: REST/DRF/backend/__init__.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- REST/DRF/backend/__init__.py	(date 1645008393775)
++++ REST/DRF/backend/__init__.py	(date 1645008393775)
+@@ -0,0 +1,0 @@
+Index: REST/DRF/backend/library/serializers.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- REST/DRF/backend/library/serializers.py	(date 1645008849639)
++++ REST/DRF/backend/library/serializers.py	(date 1645008849639)
+@@ -0,0 +1,8 @@
++from rest_framework.serializers import ModelSerializer
++from .models import Author
++
++
++class AuthorModelSerializer(ModelSerializer):
++    class Meta:
++        model = Author
++        fields = '__all__'
+\ No newline at end of file
+Index: REST/DRF/main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- REST/DRF/main.py	(date 1645092522331)
++++ REST/DRF/main.py	(date 1645092522331)
+@@ -0,0 +1,9 @@
++
++
++
++def print_hi(name):
++    print(f'Hi, {name}')
++
++
++if __name__ =='__main__':
++    print_hi('PyCharm')
